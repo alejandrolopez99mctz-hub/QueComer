@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF9D0"
+    tools:context=".PerfilActivity">
+
+    <!-- BARRA SUPERIOR CON EL LOGO -->
+    <LinearLayout
+        android:id="@+id/barraSuperior"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:background="#FFD600"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/logo" />
+
+    </LinearLayout>
+
+    <!-- DATOS DEL USUARIO Y OPCIONES -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="35dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barraSuperior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_perfil" />
+
+            <TextView
+                android:id="@+id/tvUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:text="Usuario"
+                android:textColor="#000000"
+                android:textSize="34sp" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnMiCuenta"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_opcion"
+            android:drawableStart="@drawable/ic_mi_cuenta"
+            android:drawablePadding="12dp"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:text="Mi cuenta"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnApariencia"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_opcion"
+            android:drawableStart="@drawable/ic_apariencia"
+            android:drawablePadding="12dp"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:text="Apariencia"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_opcion"
+            android:drawableStart="@drawable/ic_notificaciones"
+            android:drawablePadding="12dp"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:text="Notificaciones"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnFavoritos"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_opcion"
+            android:drawableStart="@drawable/ic_favoritos"
+            android:drawablePadding="12dp"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:text="Recetas Favoritas"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnCerrarSesion"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/bg_opcion"
+        android:drawableStart="@drawable/ic_cerrar_sesion"
+        android:drawablePadding="12dp"
+        android:gravity="start|center_vertical"
+        android:paddingStart="20dp"
+        android:text="Cerrar sesión"
+        android:textAllCaps="false"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val tvCrearCuenta = findViewById<TextView>(R.id.tvCrearCuenta)
+        val btnRegistrarse = findViewById<Button>(R.id.btnRegistrarse)
 
         etCorreo = findViewById(R.id.etCorreo)
         etPassword = findViewById(R.id.etPassword)
@@ -37,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Crear evento para ir a otra pantalla
-        tvCrearCuenta.setOnClickListener {
+        btnRegistrarse.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
