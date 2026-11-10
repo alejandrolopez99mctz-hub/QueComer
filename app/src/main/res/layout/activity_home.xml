@@ -8,16 +8,20 @@
     android:background="#FFF9D0"
     tools:context=".HomeActivity">
 
-    <!-- CONTENIDO DE LA PANTALLA -->
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scrollRecetas"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@id/barraInferior"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
         <!-- BARRA SUPERIOR -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -186,113 +190,53 @@
 
         </LinearLayout>
 
-        <!-- RECETAS RECOMENDADAS -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="25dp"
-            android:text="Recetas para ti >"
-            android:textColor="#000000"
-            android:textSize="26sp"
-            android:textStyle="bold|italic" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="14dp"
-            android:orientation="horizontal">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvTituloRecetas"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#C65A3E"
-                app:cardCornerRadius="25dp"
-                app:cardElevation="6dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="110dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/receta_sushi" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="8dp"
-                        android:text="Sushi Japonés"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="★★★★★"
-                        android:textColor="#1E1E1E"
-                        android:textSize="20sp" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/recetas_para_ti"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvEstado"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="6dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#C65A3E"
-                app:cardCornerRadius="25dp"
-                app:cardElevation="6dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="110dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/receta_sopa" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="8dp"
-                        android:text="Zemiakové placky"
-                        android:textColor="#000000"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="★★★★★"
-                        android:textColor="#1E1E1E"
-                        android:textSize="20sp" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="12dp"
+                android:accessibilityLiveRegion="polite"
+                android:textColor="#333333"
+                android:textSize="16sp" />
+            <ProgressBar
+                android:id="@+id/progresoRecetas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone" />
+            <Button
+                android:id="@+id/btnReintentar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/reintentar"
+                android:visibility="gone" />
+            <LinearLayout
+                android:id="@+id/contenedorRecetas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:orientation="vertical" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="@string/fuente_recetas"
+                android:textColor="#555555"
+                android:textSize="12sp" />
         </LinearLayout>
-
-    </LinearLayout>
-
+    </ScrollView>
     <!-- BARRA INFERIOR -->
     <LinearLayout
         android:id="@+id/barraInferior"

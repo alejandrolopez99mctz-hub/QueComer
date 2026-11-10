@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">QueComer</string>
+    <string name="recetas_para_ti">Recetas para ti</string>
+    <string name="recetas_de">Recetas de %1$s</string>
+    <string name="cargando_recetas">Cargando recetas…</string>
+    <string name="recetas_encontradas">%1$d recetas. Toca una para ver cómo prepararla.</string>
+    <string name="sin_recetas">No hay recetas disponibles para este país.</string>
+    <string name="error_recetas">No se pudieron cargar las recetas. Comprueba tu conexión e inténtalo de nuevo.</string>
+    <string name="error_servidor">El servicio respondió con un error (%1$d). Inténtalo de nuevo.</string>
+    <string name="reintentar">Reintentar</string>
+    <string name="cerrar">Cerrar</string>
+    <string name="foto_receta">Foto de la receta</string>
+    <string name="foto_receta_nombre">Foto de %1$s</string>
+    <string name="ver_receta">Ver ingredientes y preparación →</string>
+    <string name="receta_sin_nombre">Receta sin nombre</string>
+    <string name="cargando_detalle">Cargando ingredientes y preparación…</string>
+    <string name="detalle_no_disponible">No se encontró el detalle de esta receta.</string>
+    <string name="ingredientes">Ingredientes</string>
+    <string name="preparacion">Preparación</string>
+    <string name="sin_ingredientes">Ingredientes no disponibles.</string>
+    <string name="sin_preparacion">Preparación no disponible.</string>
+    <string name="fuente_recetas">Recetas e imágenes: TheMealDB. El contenido se muestra en el idioma original de la API.</string>
 </resources>
