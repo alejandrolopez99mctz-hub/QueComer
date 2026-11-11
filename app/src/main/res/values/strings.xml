@@ -20,4 +20,10 @@
     <string name="sin_ingredientes">Ingredientes no disponibles.</string>
     <string name="sin_preparacion">Preparación no disponible.</string>
     <string name="fuente_recetas">Recetas e imágenes: TheMealDB. El contenido se muestra en el idioma original de la API.</string>
+    <string name="volver_recetas">← Volver a recetas</string>
+    <string name="agregar_favorito">Agregar a favoritos</string>
+    <string name="quitar_favorito">Quitar de favoritos</string>
+    <string name="favorito_temporal">Marcada como favorita (selección temporal)</string>
+    <string name="receta_agregada_favoritos">Receta %1$s agregada a favoritos</string>
+    <string name="receta_eliminada_favoritos">Receta %1$s eliminada de favoritos</string>
 </resources>

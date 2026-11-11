@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
+
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -41,8 +41,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var btnReintentar: Button
     private lateinit var contenedor: LinearLayout
     private var llamadaLista: Call<MealResponse>? = null
-    private var llamadaDetalle: Call<MealResponse>? = null
-    private var dialogoDetalle: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +70,6 @@ class HomeActivity : AppCompatActivity() {
 
     private fun obtenerRecetas(pais: Pais) {
         llamadaLista?.cancel()
-        dialogoDetalle?.dismiss()
         paisActual = pais
         paises.forEach {
             findViewById<Button>(it.boton).apply {
@@ -134,58 +131,15 @@ class HomeActivity : AppCompatActivity() {
         contenedor.addView(tarjeta)
     }
 
+    // Igual que MusicApp: la tarjeta envía los datos de la API a otra Activity.
     private fun mostrarDetalle(receta: Meal) {
-        val id = receta.idMeal ?: return
-        dialogoDetalle?.dismiss()
-        val dialogo = AlertDialog.Builder(this)
-            .setTitle(receta.strMeal ?: getString(R.string.receta_sin_nombre))
-            .setMessage(R.string.cargando_detalle)
-            .setPositiveButton(R.string.reintentar, null)
-            .setNegativeButton(R.string.cerrar, null)
-            .create()
-        dialogoDetalle = dialogo
-        dialogo.setOnDismissListener {
-            llamadaDetalle?.cancel()
-            llamadaDetalle = null
-            dialogoDetalle = null
+        val id = receta.idMeal?.takeIf { it.isNotBlank() } ?: return
+        val intent = Intent(this, DetailsActivity::class.java).apply {
+            putExtra(DetailsActivity.EXTRA_ID_RECETA, id)
+            putExtra(DetailsActivity.EXTRA_NOMBRE_RECETA, receta.strMeal)
+            putExtra(DetailsActivity.EXTRA_IMAGEN_RECETA, receta.strMealThumb)
         }
-        dialogo.show()
-        dialogo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { cargarDetalle(id, dialogo) }
-        cargarDetalle(id, dialogo)
-    }
-
-    // filter.php sólo incluye nombre, ID y foto; lookup.php aporta ingredientes y pasos.
-    private fun cargarDetalle(id: String, dialogo: AlertDialog) {
-        llamadaDetalle?.cancel()
-        dialogo.setMessage(getString(R.string.cargando_detalle))
-        dialogo.getButton(AlertDialog.BUTTON_POSITIVE).visibility = View.GONE
-        val peticion = RetrofitClient.api.obtenerReceta(id)
-        llamadaDetalle = peticion
-        peticion.enqueue(object : Callback<MealResponse> {
-            override fun onResponse(call: Call<MealResponse>, response: Response<MealResponse>) {
-                if (llamadaDetalle !== call || isDestroyed || !dialogo.isShowing) return
-                val receta = response.body()?.meals?.firstOrNull()
-                if (!response.isSuccessful || receta == null) {
-                    dialogo.setMessage(if (response.isSuccessful) getString(R.string.detalle_no_disponible)
-                        else getString(R.string.error_servidor, response.code()))
-                    dialogo.getButton(AlertDialog.BUTTON_POSITIVE).visibility = View.VISIBLE
-                    return
-                }
-                val ingredientes = receta.ingredientes().joinToString("\n") { "• $it" }
-                    .ifBlank { getString(R.string.sin_ingredientes) }
-                val preparacion = receta.strInstructions?.trim()?.takeIf { it.isNotEmpty() }
-                    ?: getString(R.string.sin_preparacion)
-                val origen = listOfNotNull(receta.strCategory, receta.strArea).joinToString(" · ")
-                dialogo.setMessage("$origen\n\n${getString(R.string.ingredientes)}\n$ingredientes\n\n" +
-                    "${getString(R.string.preparacion)}\n$preparacion")
-            }
-
-            override fun onFailure(call: Call<MealResponse>, error: Throwable) {
-                if (call.isCanceled || llamadaDetalle !== call || isDestroyed || !dialogo.isShowing) return
-                dialogo.setMessage(getString(R.string.error_recetas))
-                dialogo.getButton(AlertDialog.BUTTON_POSITIVE).visibility = View.VISIBLE
-            }
-        })
+        startActivity(intent)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -195,8 +149,6 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         llamadaLista?.cancel()
-        dialogoDetalle?.dismiss()
-        llamadaDetalle?.cancel()
         super.onDestroy()
     }
 }
