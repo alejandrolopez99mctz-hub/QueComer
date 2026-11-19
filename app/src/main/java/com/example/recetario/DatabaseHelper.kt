@@ -159,4 +159,19 @@ class DatabaseHelper(context : Context) : SQLiteOpenHelper(
 
 
 
+    fun obtenerRecetasFavoritas(): List<com.example.recetario.model.Meal> {
+        val recetas = mutableListOf<com.example.recetario.model.Meal>()
+        readableDatabase.query(TABLE_FAVORITOS,
+            arrayOf(COL_ID_RECETA, COL_NOMBRE_RECETA, COL_IMAGEN_RECETA),
+            null, null, null, null, "$COL_ID_FAVORITO DESC").use { cursor ->
+            while (cursor.moveToNext()) {
+                recetas.add(com.example.recetario.model.Meal(
+                    idMeal = cursor.getLong(0).toString(),
+                    strMeal = cursor.getString(1),
+                    strMealThumb = cursor.getString(2)
+                ))
+            }
+        }
+        return recetas
+    }
 }

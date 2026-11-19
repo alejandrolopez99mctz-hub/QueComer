@@ -2,6 +2,7 @@ package com.example.recetario
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -17,6 +18,13 @@ import com.bumptech.glide.Glide
 import com.example.recetario.model.Meal
 import com.example.recetario.model.MealResponse
 import com.example.recetario.network.RetrofitClient
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.exceptions.ClearCredentialException
+import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,6 +48,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var progreso: ProgressBar
     private lateinit var btnReintentar: Button
     private lateinit var contenedor: LinearLayout
+    private var cerrandoSesion = false
+    private lateinit var menu: BottomNavigationView
     private var llamadaLista: Call<MealResponse>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,24 +61,64 @@ class HomeActivity : AppCompatActivity() {
         btnReintentar = findViewById(R.id.btnReintentar)
         contenedor = findViewById(R.id.contenedorRecetas)
 
-        findViewById<LinearLayout>(R.id.btnPerfil).setOnClickListener {
-            startActivity(Intent(this, PerfilActivity::class.java))
-        }
+        configurarMenu()
         paises.forEach { pais ->
             findViewById<Button>(pais.boton).setOnClickListener { obtenerRecetas(pais) }
         }
         btnReintentar.setOnClickListener { obtenerRecetas(paisActual) }
-        findViewById<LinearLayout>(R.id.btnExplorar).setOnClickListener { obtenerRecetas(paisActual) }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
             val barras = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(barras.left, barras.top, barras.right, barras.bottom)
+            view.setPadding(barras.left, barras.top, barras.right, 0)
             insets
         }
         val areaGuardada = savedInstanceState?.getString("area")
-        obtenerRecetas(paises.firstOrNull { it.area == areaGuardada } ?: paises[5])
+        paisActual = paises.firstOrNull { it.area == areaGuardada } ?: paises[5]
+        obtenerRecetas(paisActual)
+    }
+
+    private fun configurarMenu() {
+        menu = findViewById(R.id.barraInferior)
+        menu.selectedItemId = R.id.nav_inicio
+        menu.setOnItemSelectedListener { item ->
+            if (cerrandoSesion) return@setOnItemSelectedListener false
+            when (item.itemId) {
+                R.id.nav_inicio -> { obtenerRecetas(paisActual); true }
+                R.id.nav_favoritos -> {
+                    startActivity(Intent(this, FavoritesActivity::class.java))
+                    false
+                }
+                R.id.nav_perfil -> {
+                    startActivity(Intent(this, PerfilActivity::class.java))
+                    false
+                }
+                R.id.nav_salir -> { cerrarSesion(); false }
+                else -> false
+            }
+        }
+    }
+
+    private fun cerrarSesion() {
+        if (cerrandoSesion) return
+        cerrandoSesion = true
+        llamadaLista?.cancel()
+        FirebaseAuth.getInstance().signOut()
+        lifecycleScope.launch {
+            try {
+                CredentialManager.create(this@HomeActivity)
+                    .clearCredentialState(ClearCredentialStateRequest())
+            } catch (_: ClearCredentialException) {
+                // Firebase ya cerró la sesión aunque el proveedor no pueda limpiarse.
+            }
+            startActivity(Intent(this@HomeActivity, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            Toast.makeText(applicationContext, R.string.sesion_cerrada, Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
 
     private fun obtenerRecetas(pais: Pais) {
+        menu.menu.findItem(R.id.nav_inicio).isChecked = true
         llamadaLista?.cancel()
         paisActual = pais
         paises.forEach {

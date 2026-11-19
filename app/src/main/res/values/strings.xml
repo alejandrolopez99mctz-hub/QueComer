@@ -32,4 +32,10 @@
     <string name="error_guardar_favorito">No se pudo actualizar el favorito. Intenta de nuevo.</string>
     <string name="receta_agregada_favoritos">Receta %1$s agregada a favoritos</string>
     <string name="receta_eliminada_favoritos">Receta %1$s eliminada de favoritos</string>
+    <string name="menu_inicio">Inicio</string>
+    <string name="menu_guardados">Guardados</string>
+    <string name="menu_perfil">Perfil</string>
+    <string name="menu_salir">Cerrar sesión</string>
+    <string name="sin_guardados">Todavía no tienes recetas guardadas. Abre una receta y pulsa el corazón para añadirla aquí.</string>
+    <string name="sesion_cerrada">Sesión cerrada</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.recetario
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -47,6 +48,7 @@ class PerfilActivity : AppCompatActivity() {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 startActivity(intent)
+                Toast.makeText(applicationContext, R.string.sesion_cerrada, Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
