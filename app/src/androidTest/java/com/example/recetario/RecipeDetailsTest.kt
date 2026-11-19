@@ -76,9 +76,9 @@ class RecipeDetailsTest {
         fail("La API o la pantalla no estuvo disponible en 45 segundos")
     }
 
-    private fun captura(nombre: String) {
+    private fun captura(nombre: String, esperaMs: Long = 1200) {
         instrumentation.waitForIdleSync()
-        SystemClock.sleep(1200)
+        SystemClock.sleep(esperaMs)
         val salidaPrueba = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")
         val destino = if (salidaPrueba != null) File(salidaPrueba, "evidencias")
             else File(instrumentation.targetContext.getExternalFilesDir(null), "evidencias")
@@ -92,7 +92,7 @@ class RecipeDetailsTest {
     }
 
     @Test
-    fun tarjetaAbreDetalleYFavoritoEsTemporal() {
+    fun tarjetaAbreDetalleYFavoritoPersiste() {
         val intent = Intent(instrumentation.targetContext, HomeActivity::class.java)
         ActivityScenario.launch<HomeActivity>(intent).use { home ->
             lateinit var actividad: HomeActivity
@@ -119,6 +119,9 @@ class RecipeDetailsTest {
                 assertEquals(nombre, detalle.intent.getStringExtra(DetailsActivity.EXTRA_NOMBRE_RECETA))
                 assertEquals(nombre, detalle.findViewById<TextView>(R.id.tvNombreDetalle).text.toString())
                 assertTrue(detalle.findViewById<TextView>(R.id.tvIngredientesDetalle).text.isNotBlank())
+                if (detalle.findViewById<ImageButton>(R.id.btnFavorito).isSelected) {
+                    detalle.findViewById<ImageButton>(R.id.btnFavorito).performClick()
+                }
                 assertFalse(detalle.findViewById<ImageButton>(R.id.btnFavorito).isSelected)
             }
             captura("02_detalle_receta")
@@ -128,14 +131,35 @@ class RecipeDetailsTest {
                 assertEquals(detalle.getString(R.string.quitar_favorito),
                     detalle.findViewById<ImageButton>(R.id.btnFavorito).contentDescription)
             }
-            SystemClock.sleep(2500)
-            captura("03_receta_favorita")
+            captura("03_receta_favorita", esperaMs = 450)
+            val reabrir = Intent(detalle.intent)
+            instrumentation.runOnMainSync { detalle.finish() }
+            instrumentation.waitForIdleSync()
+            val monitorReabrir = instrumentation.addMonitor(DetailsActivity::class.java.name, null, false)
+            try {
+                instrumentation.runOnMainSync { actividad.startActivity(reabrir) }
+                detalle = instrumentation.waitForMonitorWithTimeout(monitorReabrir, 10000) as DetailsActivity
+            } finally {
+                instrumentation.removeMonitor(monitorReabrir)
+            }
+            esperar { detalle.findViewById<View>(R.id.contenidoDetalle).visibility == View.VISIBLE }
+            instrumentation.runOnMainSync {
+                assertTrue(detalle.findViewById<ImageButton>(R.id.btnFavorito).isSelected)
+                DatabaseHelper(detalle).use { db ->
+                    assertTrue(db.existeRecetaFavorita(reabrir.getStringExtra(DetailsActivity.EXTRA_ID_RECETA)!!.toLong()))
+                }
+            }
+            captura("04_favorito_persistente_al_reabrir")
             instrumentation.runOnMainSync {
                 detalle.findViewById<ImageButton>(R.id.btnFavorito).performClick()
                 assertFalse(detalle.findViewById<ImageButton>(R.id.btnFavorito).isSelected)
             }
-            SystemClock.sleep(2500)
-            captura("04_favorito_desactivado")
+            captura("05_favorito_eliminado", esperaMs = 450)
+            instrumentation.runOnMainSync {
+                DatabaseHelper(detalle).use { db ->
+                    assertFalse(db.existeRecetaFavorita(reabrir.getStringExtra(DetailsActivity.EXTRA_ID_RECETA)!!.toLong()))
+                }
+            }
             instrumentation.runOnMainSync { detalle.findViewById<View>(R.id.btnVolverRecetas).performClick() }
             instrumentation.waitForIdleSync()
             instrumentation.runOnMainSync {

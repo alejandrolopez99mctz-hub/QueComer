@@ -35,6 +35,8 @@ class DetailsActivity : AppCompatActivity() {
     private var recetaFavorita = false
     private var llamadaDetalle: Call<MealResponse>? = null
 
+    private lateinit var dbHelper : DatabaseHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -48,27 +50,46 @@ class DetailsActivity : AppCompatActivity() {
         progreso = findViewById(R.id.progresoDetalle)
         btnReintentar = findViewById(R.id.btnReintentarDetalle)
         contenido = findViewById(R.id.contenidoDetalle)
+
+        dbHelper = DatabaseHelper(this)
+
         btnFavorito = findViewById(R.id.btnFavorito)
-        recetaFavorita = savedInstanceState?.getBoolean("recetaFavorita") ?: false
-        actualizarFavorito()
         findViewById<Button>(R.id.btnVolverRecetas).setOnClickListener { finish() }
 
         // Recibe nombre e imagen mediante Intent, como DetailsActivity de MusicApp.
         mostrarCabecera(intent.getStringExtra(EXTRA_NOMBRE_RECETA),
             intent.getStringExtra(EXTRA_IMAGEN_RECETA))
         val id = intent.getStringExtra(EXTRA_ID_RECETA)?.takeIf { it.isNotBlank() }
-        if (id == null) {
+        val idReceta = id?.toLongOrNull()?.takeIf { it > 0 }
+        if (idReceta == null) {
+            actualizarFavorito()
             btnFavorito.isEnabled = false
             mostrarError(getString(R.string.detalle_no_disponible), permitirReintento = false)
             return
         }
-        // Misma lógica de MusicApp: alternar estado e icono, sin escribir en una BD.
+        // Como MusicApp: consultar SQLite usando el ID real recibido desde la API.
+        recetaFavorita = dbHelper.existeRecetaFavorita(idReceta)
+        actualizarFavorito()
         btnFavorito.setOnClickListener {
-            recetaFavorita = !recetaFavorita
+            val eraFavorita = recetaFavorita
+            val nombre = findViewById<TextView>(R.id.tvNombreDetalle).text.toString()
+            val correcto = try {
+                if (eraFavorita) {
+                    dbHelper.eliminarRecetaFavorita(idReceta)
+                } else {
+                    dbHelper.guardarRecetaFavorita(
+                        idReceta, nombre, intent.getStringExtra(EXTRA_IMAGEN_RECETA).orEmpty()
+                    )
+                }
+            } catch (error: android.database.sqlite.SQLiteException) {
+                false
+            }
+            recetaFavorita = dbHelper.existeRecetaFavorita(idReceta)
             actualizarFavorito()
-            val nombre = findViewById<TextView>(R.id.tvNombreDetalle).text
-            Toast.makeText(this, getString(if (recetaFavorita) R.string.receta_agregada_favoritos
-                else R.string.receta_eliminada_favoritos, nombre), Toast.LENGTH_SHORT).show()
+            val mensaje = if (!correcto) getString(R.string.error_guardar_favorito)
+                else getString(if (eraFavorita) R.string.receta_eliminada_favoritos
+                    else R.string.receta_agregada_favoritos, nombre)
+            Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
         }
         btnReintentar.setOnClickListener { cargarDetalle(id) }
         cargarDetalle(id)
@@ -80,12 +101,7 @@ class DetailsActivity : AppCompatActivity() {
         btnFavorito.contentDescription = getString(if (recetaFavorita)
             R.string.quitar_favorito else R.string.agregar_favorito)
         findViewById<TextView>(R.id.tvEstadoFavorito).setText(if (recetaFavorita)
-            R.string.favorito_temporal else R.string.agregar_favorito)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean("recetaFavorita", recetaFavorita)
-        super.onSaveInstanceState(outState)
+            R.string.receta_favorita_guardada else R.string.agregar_favorito)
     }
 
     private fun mostrarCabecera(nombre: String?, imagen: String?) {
@@ -156,6 +172,11 @@ class DetailsActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         llamadaDetalle?.cancel()
+        if (::dbHelper.isInitialized) dbHelper.close()
         super.onDestroy()
     }
+
+
+
+
 }

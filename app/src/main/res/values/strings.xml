@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">QueComer</string>
+    <string name="iniciar_google">Iniciar sesión con Google</string>
+    <string name="conectando_google">Conectando…</string>
+    <string name="error_google">No se pudo iniciar sesión con Google. Comprueba tu conexión e inténtalo de nuevo.</string>
+    <string name="error_credencial_google">No se pudo validar la cuenta de Google.</string>
+    <string name="bienvenida_google">Bienvenido, %1$s</string>
     <string name="recetas_para_ti">Recetas para ti</string>
     <string name="recetas_de">Recetas de %1$s</string>
     <string name="cargando_recetas">Cargando recetas…</string>
@@ -23,7 +28,8 @@
     <string name="volver_recetas">← Volver a recetas</string>
     <string name="agregar_favorito">Agregar a favoritos</string>
     <string name="quitar_favorito">Quitar de favoritos</string>
-    <string name="favorito_temporal">Marcada como favorita (selección temporal)</string>
+    <string name="receta_favorita_guardada">Receta guardada en favoritos</string>
+    <string name="error_guardar_favorito">No se pudo actualizar el favorito. Intenta de nuevo.</string>
     <string name="receta_agregada_favoritos">Receta %1$s agregada a favoritos</string>
     <string name="receta_eliminada_favoritos">Receta %1$s eliminada de favoritos</string>
 </resources>

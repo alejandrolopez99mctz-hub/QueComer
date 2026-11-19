@@ -16,33 +16,55 @@ class DatabaseHelper(context : Context) : SQLiteOpenHelper(
 
     companion object{
         private const val DATABASE_NAME = "recetario.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         private const val TABLE_USUARIOS = "usuarios"
+        private const val TABLE_FAVORITOS = "favoritos"
         private const val COL_ID = "id"
         private const val COL_NOMBRE = "nombre"
         private const val COL_CORREO = "correo"
         private const val COL_PASSWORD = "password"
-    }
 
-    //METODO PARA CREAR LA BASE DE DATOS Y SUS TABLAS
-    override fun onCreate(db: SQLiteDatabase?) {
-        val crearTablaUsuarios = """
+        private const val COL_ID_FAVORITO = "id"
+        private const val COL_ID_RECETA = "receta_id"
+        private const val COL_NOMBRE_RECETA = "nombre"
+        private const val COL_IMAGEN_RECETA = "receta"
+
+        private const val CREATE_TABLE_FAVORITOS = """
+            CREATE TABLE $TABLE_FAVORITOS (
+            $COL_ID_FAVORITO INTEGER PRIMARY KEY AUTOINCREMENT,
+            $COL_ID_RECETA INTEGER UNIQUE NOT NULL,
+            $COL_NOMBRE_RECETA TEXT,
+            $COL_IMAGEN_RECETA TEXT
+            )
+        """
+
+        private const val CREATE_TABLE_USUARIOS = """
             CREATE TABLE $TABLE_USUARIOS(
                 $COL_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COL_NOMBRE TEXT NOT NULL,
                 $COL_CORREO TEXT NOT NULL UNIQUE,
                 $COL_PASSWORD TEXT NOT NULL
             )
-        """.trimIndent()
+        """
 
-        db?.execSQL(crearTablaUsuarios)
+    }
+
+    //METODO PARA CREAR LA BASE DE DATOS Y SUS TABLAS
+    override fun onCreate(db: SQLiteDatabase?) {
+
+        db?.execSQL(CREATE_TABLE_USUARIOS)
+        db?.execSQL(CREATE_TABLE_FAVORITOS)
+
 
     }
 
     //METODO PARA ACTUALIZAR LA BASE DE DATOS
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db?.execSQL("DROP TABLE IF EXISTS $TABLE_USUARIOS")
-        onCreate(db)
+
+        if (oldVersion < 2){
+
+            db?.execSQL(CREATE_TABLE_FAVORITOS)
+        }
     }
 
     //metodo para registrar un usuario
@@ -88,5 +110,53 @@ class DatabaseHelper(context : Context) : SQLiteOpenHelper(
         return usuarioEncontrado
 
     }
+
+    fun guardarRecetaFavorita (idcomida : Long, nombre: String,  imagen : String) : Boolean{
+        val db = writableDatabase
+
+        val datos = ContentValues().apply {
+            put(COL_ID_RECETA,idcomida)
+            put(COL_NOMBRE_RECETA,nombre)
+            put(COL_IMAGEN_RECETA,imagen)
+
+
+        }
+        val resultado = db.insertWithOnConflict(
+            TABLE_FAVORITOS,
+            null,
+            datos,
+            SQLiteDatabase.CONFLICT_IGNORE
+        )
+        return resultado != -1L
+    }
+
+    fun eliminarRecetaFavorita (idcomida : Long) : Boolean{
+
+        val db = writableDatabase
+        val resultado = db.delete(
+            TABLE_FAVORITOS,
+            "$COL_ID_RECETA = ?",
+            arrayOf(idcomida.toString())
+        )
+        return resultado > 0
+    }
+
+    fun existeRecetaFavorita (idcomida : Long ) : Boolean{
+
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT $COL_ID_FAVORITO FROM $TABLE_FAVORITOS WHERE $COL_ID_RECETA = ?",
+            arrayOf(idcomida.toString())
+
+
+        )
+        val existe = cursor.moveToFirst()
+        cursor.close()
+        return existe
+
+    }
+
+
+
 
 }

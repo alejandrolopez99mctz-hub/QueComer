@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "815150937608",
+    "project_id": "quecomer-f7977",
+    "storage_bucket": "quecomer-f7977.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:815150937608:android:b3e28d2b6dd8c2576043bd",
+        "android_client_info": {
+          "package_name": "com.example.recetario"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "815150937608-erslno850vfitne1r806f9oqc1mrnk66.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.recetario",
+            "certificate_hash": "75331bde10ceb4af6659293b86e42a1f5427738d"
+          }
+        },
+        {
+          "client_id": "815150937608-2hd3610ne7at9psqm8gv1in0cfjch575.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCl3DPtLd7JQF83xsL2HgJayu9lc8vUls"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "815150937608-2hd3610ne7at9psqm8gv1in0cfjch575.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
